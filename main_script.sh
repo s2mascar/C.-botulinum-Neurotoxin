@@ -58,9 +58,9 @@ samtools index mapped_neurotoxin_data.sorted.bam
 
 
 
-echo "Coverage of Mapped Reads to Reference Genome" >> output.text
+echo "Coverage of Mapped Reads to Reference Genome" >> output.txt
 
-samtools coverage mapped_neurotoxin_data.sorted.bam >> output.text
+samtools coverage mapped_neurotoxin_data.sorted.bam >> output.txt
 
 
 echo "Make a Consensus Sequence"
@@ -70,7 +70,13 @@ samtools mpileup -aa -A -Q 0 -d 0 mapped_neurotoxin_data.sorted.bam | ivar conse
 
 echo "Percent Identity/Similarity from Consensus Sequence to Reference Genome" >> output.text
 
-blastn -query F1_reference_genome.fasta -subject consensus_neurotoxin_sequence.fa -outfmt 6 -out results.txt
+#Check Python & Biopython is installed as well.
+
+python3 --version
+
+pip3 install biopython
+
+python3 calculateIdentity.py aligned_sequences.fasta >> output.txt
 
 
 
