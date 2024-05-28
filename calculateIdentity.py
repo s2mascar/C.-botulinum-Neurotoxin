@@ -41,6 +41,8 @@ if __name__ == "__main__":
         identity_with_gaps, identity_without_gaps = read_fasta_and_calculate_identity(fasta_file)
         print(f"Percentage Identity (Including Gaps): {identity_with_gaps:.2f}%")
         print(f"Percentage Identity (Excluding Gaps): {identity_without_gaps:.2f}%")
+        print(identity_with_gaps)
+        print(identity_without_gaps)
     except Exception as e:
         print(f"Error: {e}")
         sys.exit(1)

@@ -1,46 +1,62 @@
+import pandas as pd
+
 # Initialize an empty list to store the data
 data = []
 
+# Function to parse the percent identities from the text
+def parse_percent_identities(lines):
+    identities = {}
+    for i, line in enumerate(lines):
+        if 'Percent Identity/Similarity from Consensus Sequence to Reference Genome' in line:
+            identities['Percent Identity (Including Gaps)'] = float(lines[i + 1].strip())
+            identities['Percent Identity (Excluding Gaps)'] = float(lines[i + 2].strip())
+    return identities
+
 # Open the text file
 with open('output.text', 'r') as file:
-    # Skip the header line
-    header = file.readline().strip().split()
+    lines = file.readlines()
+    
+    # Parse the percent identities
+    identities = parse_percent_identities(lines)
+    
+    # Find the index of the coverage data header
+    coverage_start_index = None
+    for i, line in enumerate(lines):
+        if line.startswith('#rname'):
+            coverage_start_index = i + 1
+            break
 
-    # Process each subsequent line
-    for line in file:
-        # Split the line by tabs or spaces
-        fields = line.strip().split()
-        
-        # Verify that the line has the expected number of fields
-        if len(fields) == 9:
-            try:
-                # Convert fields to the appropriate data types and store in a dictionary
-                record = {
-                    'rname': fields[0],
-                    'startpos': int(fields[1]),
-                    'endpos': int(fields[2]),
-                    'numreads': int(fields[3]),
-                    'covbases': int(fields[4]),
-                    'coverage': float(fields[5]),  # Assuming coverage might be a float
-                    'meandepth': float(fields[6]),
-                    'meanbaseq': float(fields[7]),
-                    'meanmapq': float(fields[8])
-                }
-                data.append(record)
-            except ValueError as e:
-                print("")
-        else:
-            print("")
+    # Process each subsequent line for coverage data
+    if coverage_start_index is not None:
+        for line in lines[coverage_start_index:]:
+            fields = line.strip().split()
+            if len(fields) == 9:
+                try:
+                    # Convert fields to the appropriate data types and store in a dictionary
+                    record = {
+                        'rname': fields[0],
+                        'startpos': int(fields[1]),
+                        'endpos': int(fields[2]),
+                        'numreads': int(fields[3]),
+                        'covbases': int(fields[4]),
+                        'coverage': float(fields[5]),
+                        'meandepth': float(fields[6]),
+                        'meanbaseq': float(fields[7]),
+                        'meanmapq': float(fields[8])
+                    }
+                    data.append(record)
+                except ValueError as e:
+                    print(f"Error parsing line: {line.strip()}")
 
 # Create a DataFrame from the list of dictionaries
 df = pd.DataFrame(data)
 
-# Extract the coverage value
-coverage_value = df.loc[0, 'coverage']  # Access the coverage value from the first row
+# Add the percent identity values to the DataFrame
+df['Percent Identity (Including Gaps)'] = identities.get('Percent Identity (Including Gaps)', None)
+df['Percent Identity (Excluding Gaps)'] = identities.get('Percent Identity (Excluding Gaps)', None)
 
 # Save the DataFrame to a CSV file
 df.to_csv('output_table.csv', index=False)
 
 # Print the DataFrame
 print(df)
-print(coverage_value)
