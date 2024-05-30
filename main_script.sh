@@ -79,6 +79,12 @@ pip3 install biopython
 python3 calculateIdentity.py aligned_sequences.fasta >> output.txt
 
 
+pip3 install pandas
+
+python3 get_coverage_value.py output.text
+
+
+
 
 
 
