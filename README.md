@@ -1,4 +1,4 @@
-# Project 1 - Finding C.botulinum in Ancient DNA
+# Project 1 - Finding C.botulinum
 
 
 # Quality Filtering and Trimming, Mapping Reads, and Generating Consensus Sequence
