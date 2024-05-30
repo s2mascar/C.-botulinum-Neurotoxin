@@ -2,7 +2,16 @@
 
 echo "Clostridium Botulinum Neurotoxin Finder for Ancient DNA"
 
-#To start the workflow, make the following directories for the data to be stored into.
+#To start the workflow, download the respective SRA dataset
+
+prefetch ERR5647172
+
+fasterq-dump ERR5647172
+fasterq-dump ERR5647172 --split-files --skip-technical
+
+### SEE IF YOU CAN DO THE SPLIT FILES AUTOMATICALLY
+
+# Next, make the following directories for the data to be stored into.
 
 mkdir ERR5647172
 cd ERR5647172
@@ -97,50 +106,6 @@ elif [ "$file_count" -eq 2 ]; then
 else
     echo "There are no files to run. Error."
 fi
-
-#__________________________________________________________________________________________________________________________________________
-
-echo "Quality Filtering & Trimming via FASTP"
-
-#Single-End Data
-
-#fastp -i in.fq -o out.fq
-
-#Paired-End Data
-
-#fastp -i ERR5647172_1.fastq -I ERR5647172_2.fastq -o ERR5647172_1_filtered.fastq -O ERR5647172_2_filtered.fastq
-
-
-
-echo "Mapping Reads to a Reference Genome"
-
-#Index the Reference Genome--------------------------------------------------------
-
-bwa index F1_reference_genome.fasta
-
-#Map Reads to the Reference Genome--------------------------------------------------
-
-#Single-End Data
-
-#bwa aln ecoli-rel606.fa /data/SRR098038.fastq.gz > SRR098038.sai
-
-
-#Paired-End Data
-
-bwa aln F1_reference_genome.fasta /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/ERR5647172_1_filtered.fastq > ERR5647172_1_filtered.sai
-
-bwa aln F1_reference_genome.fasta /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/ERR5647172_2_filtered.fastq > ERR5647172_2_filtered.sai
-
-#/data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets
-
-#Making a .SAM file to contain all info about read maps onto the ref genome--------------------
-
-#Single-End Data
-#bwa samse ecoli-rel606.fa SRR098038.sai /data/SRR098038.fastq.gz > SRR098038.sam
-
-#Paired-End Data
-bwa sampe F1_reference_genome.fasta ERR5647172_1_filtered.sai ERR5647172_2_filtered.sai /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/ERR5647172_1_filtered.fastq /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/ERR5647172_2_filtered.fastq > mapped_neurotoxin_data.sam
-
 
 
 
