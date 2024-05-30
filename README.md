@@ -1,5 +1,5 @@
-# Project 1 - Finding C.botulinum
-
+# Project 1 - Finding C. _botulinum
+_
 
 # Quality Filtering and Trimming, Mapping Reads, and Generating Consensus Sequence
 This repository contains a Bash script to perform quality filtering and trimming of sequencing data using FASTP, map reads to a reference genome using BWA, convert and manipulate files with SAMtools, and generate a consensus sequence using iVar. Additionally, it calculates the coverage of mapped reads and assesses the percent identity/similarity of the consensus sequence to the reference genome using BLAST.
