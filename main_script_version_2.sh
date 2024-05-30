@@ -4,10 +4,14 @@ echo "Clostridium Botulinum Neurotoxin Finder for Ancient DNA"
 
 #To start the workflow, download the respective SRA dataset
 
+#Variable:
+sra_filename = "ERR5647172"
+
+
+
 prefetch ERR5647172
 
-fasterq-dump ERR5647172
-fasterq-dump ERR5647172 --split-files --skip-technical
+fasterq-dump ERR5647172 --split-files
 
 ### SEE IF YOU CAN DO THE SPLIT FILES AUTOMATICALLY
 
@@ -155,7 +159,7 @@ pip3 install pandas
 
 python3 get_coverage_value.py output.text
 
-DESTINATION_DIR="/data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis"
+DESTINATION_DIR="/data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/all_CSV_files"
 
 # Copy the output file to the destination directory
 
