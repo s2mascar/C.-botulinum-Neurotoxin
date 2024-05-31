@@ -1,6 +1,17 @@
-#!/usr/bin/bash
+#!/bin/bash
+#SBATCH --job-name=neurotoxin_run
+#SBATCH --account=def-acdoxey # adjust this to match the accounting group you are using to submit jobs
+#SBATCH --time=5:00:00      # adjust this to match the walltime of your job
+#SBATCH --nodes=1      
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:0           # You need to request one GPU to be able to run AlphaFold properly
+#SBATCH --cpus-per-task=8      # DO NOT INCREASE THIS AS ALPHAFOLD CANNOT TAKE ADVANTAGE OF MORE
+#SBATCH --mem=500G              # adjust this according to the memory requirement per node you need
+#SBATCH --mail-user=s2mascar@uwaterloo.ca # adjust this to match your email address
+#SBATCH --mail-type=ALL
 
-echo "Clostridium Botulinum Neurotoxin Finder for Ancient DNA"
+
+echo "Clostridium Botulinum Neurotoxin Type C Finder for Ancient DNA"
 
 #To start the workflow, download the respective SRA dataset
 
@@ -12,8 +23,9 @@ echo "Clostridium Botulinum Neurotoxin Finder for Ancient DNA"
 # In each SRA dataset folder, you should see how many files are there. 1 File - Single-End, 2 Files - Paired-End
 
 # Define the directory
-DIR="/home/smascar/scratch/neurotoxin_project/all_SRA_datasets"
+DIR="/home/smascar/scratch/neurotoxin_project/all_SRA_datasets/ERR5647172/origin_files"
 SRA_name="ERR5647172"
+toxin_ref_seq="/home/smascar/scratch/neurotoxin_project/all_toxin_ref_seq"
 toxin_type="C"
 
 
@@ -23,19 +35,20 @@ file_count=$(find "$DIR" -maxdepth 1 -type f | wc -l)
 # Check the number of files and take action accordingly
 if [ "$file_count" -eq 1 ]; then
 	echo "This dataset is Single-End Reads"
-
+	cd "$DIR"
 	#################################################################################################
 
 	echo "Quality Filtering & Trimming via FASTP for Single-End Data"
 
 	fastp -i "$SRA_name".fastq -o "$SRA_name"_filtered.fastq
-
+	cd ..
+	cd /home/smascar/scratch/neurotoxin_project/all_SRA_datasets/"$SRA_name"/Type_C/C
 
 	echo "Mapping Single-End Reads to a Reference Genome"
 
 	#Index the Reference Genome--------------------------------------------------------
 
-	bwa index C_reference_genome.fasta
+	bwa index "$toxin_ref_seq"/"$toxin_ref_seq"/C_reference_genome.fasta
 
 	#Map Single-End Reads to the Reference Genome--------------------------------------------------
 
@@ -61,20 +74,20 @@ elif [ "$file_count" -eq 2 ]; then
 
 	#Index the Reference Genome--------------------------------------------------------
 
-	bwa index C_reference_genome.fasta
+	bwa index "$toxin_ref_seq"/C_reference_genome.fasta
 
 	#Map Paired-End Reads to the Reference Genome--------------------------------------------------
 
 
-	bwa aln C_reference_genome.fasta /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/"$SRA_name"_1_filtered.fastq > "$SRA_name"_1_filtered.sai
+	bwa aln "$toxin_ref_seq"/C_reference_genome.fasta "$DIR"/"$SRA_name"_1_filtered.fastq > "$SRA_name"_1_filtered.sai
 
-	bwa aln C_reference_genome.fasta /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/"$SRA_name"_2_filtered.fastq > "$SRA_name"_2_filtered.sai
+	bwa aln "$toxin_ref_seq"/C_reference_genome.fasta /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/"$SRA_name"_2_filtered.fastq > "$SRA_name"_2_filtered.sai
 
 
 	#Making a .SAM file to contain all info about the Paired-End read maps onto the ref genome--------------------
 
 	
-	bwa sampe C_reference_genome.fasta "$SRA_name"_1_filtered.sai "$SRA_name"_2_filtered.sai /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/"$SRA_name"_1_filtered.fastq /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/"$SRA_name"_2_filtered.fastq > mapped_neurotoxin_data.sam
+	bwa sampe "$toxin_ref_seq"/C_reference_genome.fasta "$SRA_name"_1_filtered.sai "$SRA_name"_2_filtered.sai /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/"$SRA_name"_1_filtered.fastq /data/Shyan/Project_2_Clostridium_botulinum_Neurotoxin/Full_Neurotoxin_Dataset_Analysis/SRA_datasets/"$SRA_name"_2_filtered.fastq > mapped_neurotoxin_data.sam
 
 else
     echo "There are no files to run. Error."
@@ -87,7 +100,7 @@ fi
 
 #Index the Reference genome to work with Samtools
 
-samtools faidx C_reference_genome.fasta
+samtools faidx "$toxin_ref_seq"/C_reference_genome.fasta
 
 
 #Convert the .SAM file to a .BAM file
