@@ -4,43 +4,21 @@ echo "Clostridium Botulinum Neurotoxin Finder for Ancient DNA"
 
 #To start the workflow, download the respective SRA dataset
 
-#Variable:
-sra_filename = "ERR5647172"
+#use a loop for each of the SRA filenames
+
+
+list_of_sra_datasets=(ERR5647172 ERR4375049 ERR4374027 SRR23016251 SRR23016252 SRR1748806 SRR9276195 SRR9276194 SRR11615772 ERR1879296 ERR3678614 ERR3678629 ERR3678626)
+
+
+for dataset in list_of_sra_datasets; do
+  # Commands to be executed for each item
+  echo "Processing item: $item"
+done
 
 
 
-prefetch ERR5647172
 
-fasterq-dump ERR5647172 --split-files
-
-### SEE IF YOU CAN DO THE SPLIT FILES AUTOMATICALLY
-
-# Next, make the following directories for the data to be stored into.
-
-mkdir ERR5647172
-cd ERR5647172
-mkdir Type_A Type_B Type_C Type_D Type_E Type_F Other_types
-cd Type_A
-mkdir A1 A2 A3 A4 A5 A6 A7 A8
-
-cd Type_B
-mkdir B1 B2 B3 B4 B5 B6 B7 B8
-
-cd Type_C
-mkdir C CD
-
-cd Type_D
-mkdir D DC
-
-cd Type_E
-mkdir E1 E2 E3 E4 E5 E6 E7 E8 E9 E10 E11 E12
-
-cd Type_F
-mkdir F1 F2 F3 F4 F5 F6 F7 F8 F9
-
-cd Other_types
-mkdir En G HA_FA HDR7951433 PMP1 TeNT Wo X
-
+#####################################################################################################################################
 
 # In the SRA_datasets folder this is where all of the original downloaded SRA dataset should be stored, only place where they are stored and called from.
 # In each SRA dataset folder, you should see how many files are there. 1 File - Single-End, 2 Files - Paired-End
