@@ -57,14 +57,35 @@ def parse_output_file(output_filename):
     df['Percent Identity (Including Gaps)'] = identities.get('Percent Identity (Including Gaps)', None)
     df['Percent Identity (Excluding Gaps)'] = identities.get('Percent Identity (Excluding Gaps)', None)
 
-    # Save the DataFrame to a CSV file
-    output_csv_filename = 'output_table.csv'
-    df.to_csv(output_csv_filename, index=False)
+    # If there is data in the DataFrame, extract and print the required values
+    if not df.empty:
+        # Extract the coverage value
+        coverage_value = df.loc[0, 'coverage']  # Access the coverage value from the first row
 
-    # Print the DataFrame
-    print(df)
+        # Extract the Percent Identity with Gaps
+        percent_id_wt_gaps = df.loc[0, 'Percent Identity (Including Gaps)']  # Access the coverage value from the first row
 
-    return df, output_csv_filename
+        # Extract the Percent Identity without Gaps
+        percent_id_wo_gaps = df.loc[0, 'Percent Identity (Excluding Gaps)']  # Access the coverage value from the first row
+
+        #print(coverage_value)
+        #print(percent_id_wt_gaps)
+        #print(percent_id_wo_gaps)
+
+        # Create a DataFrame for these values
+        summary_df = pd.DataFrame({
+            'Coverage': [coverage_value],
+            'Percent Identity (Including Gaps)': [percent_id_wt_gaps],
+            'Percent Identity (Excluding Gaps)': [percent_id_wo_gaps]
+        })
+
+        # Save the summary DataFrame to a CSV file
+        summary_csv_filename = f'summary_output_{output_filename}.csv'
+        summary_df.to_csv(summary_csv_filename, index=False)
+
+        #print(summary_df)
+
+    return df
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
