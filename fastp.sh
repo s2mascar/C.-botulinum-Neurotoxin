@@ -13,9 +13,7 @@
 
 DIR="/home/smascar/scratch/neurotoxin_project/all_SRA_datasets"
 
-list_of_sra_datasets=(ERR4375049 ERR4374027 SRR23016251) 
-
-	#SRR23016252 SRR1748806 SRR9276195 SRR9276194 SRR11615772 ERR1879296 ERR3678614 ERR3678629 ERR3678626)
+list_of_sra_datasets=(ERR4375049 ERR4374027 SRR23016251 SRR23016252 SRR1748806 SRR9276195 SRR9276194 SRR11615772 ERR1879296 ERR3678614 ERR3678629 ERR3678626)
 
 SRA_name="ERR5647172"
 
@@ -86,7 +84,7 @@ for dataset in "${list_of_sra_datasets[@]}"; do
   # Add the Consensus Sequence and the Reference Sequence Together
 
 
-  cat /home/smascar/scratch/neurotoxin_project/all_toxin_ref_seq/C_reference_genome.fasta consensus_neurotoxin_sequence > aligned_sequences.fasta
+  cat /home/smascar/scratch/neurotoxin_project/all_toxin_ref_seq/C_reference_genome.fasta consensus_neurotoxin_sequence.fa > aligned_sequences.fasta
 
   #Check Python & Biopython is installed as well.
 
@@ -100,13 +98,13 @@ for dataset in "${list_of_sra_datasets[@]}"; do
 
   pip3 install pandas
 
-  python3 /home/smascar/scratch/neurotoxin_project/scripts/get_coverage_value.py "$dataset"_"$toxin_type"_output.txt >> "$dataset"_"$toxin_type"_csvoutput.txt
+  python3 /home/smascar/scratch/neurotoxin_project/scripts/get_coverage_value.py "$dataset"_"$toxin_type"_output.txt
 
   DESTINATION_DIR="/home/smascar/scratch/neurotoxin_project/csv_files"
 
   # Copy the output file to the destination directory
 
-  cp "$dataset"_"$toxin_type"_csvoutput.txt "$DESTINATION_DIR" 
+  cp summary_output_"$dataset"_"$toxin_type"_output.txt.csv "$DESTINATION_DIR" 
 
 
 done
