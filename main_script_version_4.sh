@@ -4,9 +4,8 @@
 #SBATCH --time=5:00:00      # adjust this to match the walltime of your job
 #SBATCH --nodes=1      
 #SBATCH --ntasks=1
-#SBATCH --gres=gpu:0           # Request for GPUs
-#SBATCH --cpus-per-task=8      # Request for CPUs
-#SBATCH --mem=500G              # adjust this according to the memory requirement per node you need
+#SBATCH --cpus-per-task=4      # Request for CPUs
+#SBATCH --mem=300G              # adjust this according to the memory requirement per node you need
 #SBATCH --mail-user=s2mascar@uwaterloo.ca # adjust this to match your email address
 #SBATCH --mail-type=ALL
 
